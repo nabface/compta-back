@@ -21,7 +21,7 @@
 		}
 		
 		public function delete($id) {
-			//TODO
+			$this->getDb()->delete('groups', array('id' => $id));
 		}
 		
 	}
