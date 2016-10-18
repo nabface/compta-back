@@ -23,7 +23,7 @@
 		}
 		
 		public function delete($id) {
-			//TODO
+			$this->getDb()->delete('depenses', array('id' => $id));
 		}
 		
 	}
