@@ -26,6 +26,12 @@
 			$this->id = $id;
 			return $this;
 		}
+		public function setMontant($montant) {
+			$montant = (float) $montant;
+			if ($montant <= 0) return NULL;
+			$this->montant = $montant;
+			return $this;
+		}
 		public function setDate($date) {
 			$date = (int) $date;
 			if ($date <= 0) return NULL;

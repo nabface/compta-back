@@ -23,17 +23,17 @@
 	)->bind('api_users');
 	
 	$app->post(
-		'/api/group/{id}',
+		'/api/group',
 		'Compta\Controller\APIController::addGroup'
 	)->bind('api_group_add');
 	
 	$app->post(
-		'/api/group/{group_id}/depense',
+		'/api/depense',
 		'Compta\Controller\APIController::addDepense'
 	)->bind('api_depense_add');
 	
 	$app->post(
-		'/api/group/{group_id}/user',
+		'/api/user',
 		'Compta\Controller\APIController::addUser'
 	)->bind('api_user_add');
 	
@@ -43,12 +43,12 @@
 	)->bind('api_group_delete');
 	
 	$app->delete(
-		'/api/group/{group_id}/depense/{id}',
+		'/api/depense/{id}',
 		'Compta\Controller\APIController::deleteDepense'
 	)->bind('api_depense_delete');
 	
 	$app->delete(
-		'/api/group/{group_id}/user/{id}',
+		'/api/user/{id}',
 		'Compta\Controller\APIController::deleteUser'
 	)->bind('api_user_delete');
 	

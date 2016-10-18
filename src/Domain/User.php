@@ -51,6 +51,10 @@
 			return $this;
 		}
 		
+		public function addGroup($group_id) {
+			//TODO
+		}
+		
 	}
 	
 ?>
