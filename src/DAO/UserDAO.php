@@ -25,7 +25,7 @@
 			$user = new User();
 			$user->setId($result['id'])
 			     ->setName($result['name'])
-			     ->setColorId($result['color_id']);
+			     ->setColor($result['color']);
 			return $user;
 		}
 		
@@ -44,20 +44,10 @@
 					'Id' => $user->getId(),
 					'username' => $user->getName(),
 					'usergroup' => $this->groupDAO->get($group_id)->getName(),
-					'usercolor' => $this->getColorName($user->getColorId())
+					'usercolor' => $user->getColor()
 				);
 			}
 			return $users;
-		}
-		
-		private function getColorName($id) {
-			$query = $this->getDb()->createQueryBuilder();
-			$query->select('*')
-			      ->from('colors')
-			      ->where('id = :id')
-			      ->setParameter(':id', $id);
-			$result = $query->execute()->fetch(\PDO::FETCH_ASSOC);
-			return $result['name'];
 		}
 		
 		public function removeFromGroup($group_id) {

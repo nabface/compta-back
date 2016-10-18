@@ -6,13 +6,13 @@
 		
 		private $id,
 		        $name,
-		        $color_id,
+		        $color,
 		        $groups,
 		        $depenses;
 		
 		public function getId() { return $this->id; }
 		public function getName() { return $this->name; }
-		public function getColorId() { return $this->color_id; }
+		public function getColor() { return $this->color; }
 		public function getGroups() { return $this->groups; }
 		public function getDepenses() { return $this->depenses; }
 		
@@ -29,10 +29,11 @@
 			$this->name = $name;
 			return $this;
 		}
-		public function setColorId($color_id) {
-			$color_id = (int) $color_id;
-			if ($color_id <= 0) return NULL;
-			$this->color_id = $color_id;
+		public function setColor($color) {
+			$color = (string) $color;
+			$length = strlen($color);
+			if ($length = 0 || $length > 255) return NULL;
+			$this->color = $color;
 			return $this;
 		}
 		public function setGroups(array $groups) {
