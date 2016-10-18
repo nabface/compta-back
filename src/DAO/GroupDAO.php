@@ -6,6 +6,24 @@
 	
 	class GroupDAO extends DAO {
 		
+		public function get($id) {
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('groups')
+			      ->where('id = :id')
+			      ->setParameter(':id', $id);
+			$result = $query->execute()->fetch(\PDO::FETCH_ASSOC);
+			$group = new Group();
+			$group->setId($result['id'])
+			     ->setName($result['name']);
+			return $group;
+		}
+		
+		public function findByUser($user_id) {
+			// TODO
+			return $this;
+		}
+		
 		public function save(Group $group) {
 			$data = array(
 				'name' => $group->getName()

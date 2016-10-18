@@ -15,6 +15,7 @@
 	//register services
 	$app['dao.group'] = new Compta\DAO\GroupDAO($app['db']);
 	$app['dao.user'] = new Compta\DAO\UserDAO($app['db']);
+	$app['dao.user'] = $app['dao.user']->setGroupDAO($app['dao.group']);
 	$app['dao.depense'] = new Compta\DAO\DepenseDAO($app['db']);
 	
 	// register JSON data decoder for JSON requests

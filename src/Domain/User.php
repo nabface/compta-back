@@ -7,7 +7,8 @@
 		private $id,
 		        $name,
 		        $color_id,
-		        $groups;
+		        $groups,
+		        $depenses;
 		
 		public function getId() { return $this->id; }
 		public function getName() { return $this->name; }
