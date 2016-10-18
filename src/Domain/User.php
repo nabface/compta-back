@@ -52,7 +52,12 @@
 		}
 		
 		public function addGroup($group_id) {
-			//TODO
+			$groups = $this->getGroups;
+			if (!in_array($group_id, $groups)) {
+				$groups[] = $group_id;
+				$this->setGroups($groups);
+			}
+			return $this;
 		}
 		
 	}
