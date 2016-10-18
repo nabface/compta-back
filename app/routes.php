@@ -1,14 +1,14 @@
 <?php
 	
 	$app->get(
-		'/api/group/{group_id}/depenses',
-		'Compta\Controller\APIController::getDepenses'
-	)->bind('api_depenses');
+		'/read/group/{group_id}/depenses',
+		'Compta\Controller\APIControllerRead::getDepenses'
+	)->bind('read_depenses');
 	
 	$app->get(
-		'/api/group/{group_id}/users',
-		'Compta\Controller\APIController::getUsers'
-	)->bind('api_users');
+		'/read/group/{group_id}/users',
+		'Compta\Controller\APIControllerRead::getUsers'
+	)->bind('read_users');
 	
 	$app->post(
 		'/api/group',

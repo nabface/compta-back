@@ -10,18 +10,6 @@
 	
 	class ApiController {
 		
-		public function getDepenses($group_id, Application $app) {
-			$depenses = $app['dao.depense']->findByGroup($group_id);
-			return $app->json($depenses);
-		}
-		
-		public function getUsers($group_id, Application $app) {
-			$users = $app['dao.user']->findByGroup($group_id);
-			return $app->json(array(
-				'records' => $users
-			), 200);
-		}
-		
 		public function addGroup(Request $request, Application $app) {
 			if (!$request->request->has('name'))
 				return $app->json('Missing required parameter: name', 400);
