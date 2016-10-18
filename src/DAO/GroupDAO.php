@@ -20,6 +20,10 @@
 			}
 		}
 		
+		public function delete($id) {
+			//TODO
+		}
+		
 	}
 	
 ?>

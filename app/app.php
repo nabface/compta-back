@@ -14,17 +14,8 @@
 	
 	//register services
 	$app['dao.group'] = new Compta\DAO\GroupDAO($app['db']);
-	$app['dao.user'] = function($app) {
-		$userDAO = new Compta\DAO\UserDAO($app['db']);
-		$userDAO->setGroupDAO($app['dao.group']);
-		return $userDAO;
-	};
-	$app['dao.depense'] = function($app) {
-		$depenseDAO = new Compta\DAO\DepenseDAO($app['db']);
-		$depenseDAO->setGroupDAO($app['dao.group']);
-		$depenseDAO->setUserDAO($app['dao.user']);
-		return $depenseDAO;
-	};
+	$app['dao.user'] = new Compta\DAO\UserDAO($app['db']);
+	$app['dao.depense'] = new Compta\DAO\DepenseDAO($app['db']);
 	
 	// register JSON data decoder for JSON requests
 	$app->before(function (Request $request) {
