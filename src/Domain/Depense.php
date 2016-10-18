@@ -34,7 +34,7 @@
 		}
 		public function setDate($date) {
 			$date = (int) $date;
-			if ($date <= 0) return NULL;
+			if ($date < 0) return NULL;
 			$this->date = $date;
 			return $this;
 		}
