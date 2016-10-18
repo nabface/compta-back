@@ -6,47 +6,27 @@
 	
 	class UserDAO extends DAO {
 		
-		private $groupDAO;
-		
-		private function getGroupDAO() { return $this->groupDAO; }
-		
-		public function setGroupDAO(GroupDAO $groupDAO) {
-			$this->groupDAO = $groupDAO;
-			return $this;
-		}
-		
-		private function get($id) {
+		private function get($info) {
+			$where = ($info == (int) $info) ? 'id = :info' : 'name = :info' ;
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
 			      ->from('users')
-			      ->where('id = :id')
-			      ->setParameter(':id', $id);
-			$result = $query->execute()->fetch(\PDO::FETCH_ASSOC);
-			$user = new User();
-			$user->setId($result['id'])
-			     ->setName($result['name'])
-			     ->setColor($result['color']);
-			return $user;
+			      ->where($where)
+			      ->setParameter(':info', $info);
+			$statement = $query->execute();
+			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\User');
+			return $statement->fetch();
 		}
 		
 		public function findByGroup($group_id) {
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
 			      ->from('mapping_groups')
-			      ->where('group_id = ?')
-			      ->setParameter(0, $group_id);
-			$users_id = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			      ->where('group_id = :group_id')
+			      ->setParameter(':group_id', $group_id);
+			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 			$users = [];
-			foreach ($users_id as $user_id) {
-				$user = $this->get($user_id['user_id']);
-				$id = $user->getId();
-				$users[] = array(
-					'Id' => $user->getId(),
-					'username' => $user->getName(),
-					'usergroup' => $this->groupDAO->get($group_id)->getName(),
-					'usercolor' => $user->getColor()
-				);
-			}
+			foreach ($answer as $row) $users[] = $this->get($row['user_id']);
 			return $users;
 		}
 		

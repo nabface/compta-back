@@ -6,55 +6,25 @@
 	
 	class DepenseDAO extends DAO {
 		
-		private $groupDAO;
-		
-		private function getGroupDAO() { return $this->groupDAO; }
-		
-		public function setGroupDAO(GroupDAO $groupDAO) {
-			$this->groupDAO = $groupDAO;
-			return $this;
-		}
-		
 		public function findByGroup($group_id) {
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
 			      ->from('depenses')
-			      ->where('group_id = ?')
-			      ->setParameter(0, $group_id);
-			$list = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			      ->where('group_id = :group_id')
+			      ->setParameter(':group_id', $group_id);
+			$statement = $query->execute();
+			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
 			$depenses = [];
-			foreach ($list as $row) {
-				$depense = new Depense();
-				$depense->setId($row['id'])
-				        ->setMontant($row['montant'])
-				        ->setDate($row['date'])
-				        ->setName($row['name'])
-				        ->setGroupId($row['group_id'])
-				        ->setUserId($row['user_id']);
+			foreach ($statement->fetchAll() as $depense) {
 				$query = $this->getDb()->createQueryBuilder();
 				$query->select('*')
 				      ->from('mapping_users')
-				      ->where('depense_id = ?')
-				      ->setParameter(0, $depense->getId());
-				$users_id = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-				$users = '';
-				$users_nb = 0;
-				foreach ($users_id as $user_id) {
-					$users .= ($users == '') ?
-						$user_id['user_id'] :
-						','.$user_id['user_id'] ;
-					$users_nb++;
-				}
-				$depenses[] = array(
-					'Id' => $depense->getId(),
-					'Montant' => $depense->getMontant(),
-					'Payeur' => $depense->getUserId(),
-					'Concernes' => $users,
-					'Date' => $depense->getDate(),
-					'nbConcernes' => $users_nb,
-					'usergroup' => $this->groupDAO->get($group_id)->getName(),
-					'Description' => $depense->getName()
-				);
+				      ->where('depense_id = :depense_id')
+				      ->setParameter(':depense_id', $depense->getId());
+				$map = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+				foreach ($map as $association)
+					$depense->addUser($association['user_id']);
+				$depenses[] = $depense;
 			}
 			return $depenses;
 		}

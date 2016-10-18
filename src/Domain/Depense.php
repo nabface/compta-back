@@ -66,6 +66,15 @@
 			return $this;
 		}
 		
+		public function addUser($user_id) {
+			$users = ( $this->getUsers() !== NULL ) ? $this->getUsers() : [] ;
+			if (!in_array($user_id, $users)) {
+				$users[] = $user_id;
+				$this->setUsers($users);
+			}
+			return $this;
+		}
+		
 	}
 	
 ?>

@@ -11,19 +11,19 @@
 	)->bind('read_users');
 	
 	$app->post(
-		'/api/group',
-		'Compta\Controller\APIController::addGroup'
-	)->bind('api_group_add');
+		'/add/group',
+		'Compta\Controller\APIControllerCreate::addGroup'
+	)->bind('add_group');
 	
 	$app->post(
-		'/api/depense',
-		'Compta\Controller\APIController::addDepense'
-	)->bind('api_depense_add');
+		'/add/depense',
+		'Compta\Controller\APIControllerCreate::addDepense'
+	)->bind('add_depense');
 	
 	$app->post(
-		'/api/user',
-		'Compta\Controller\APIController::addUser'
-	)->bind('api_user_add');
+		'/add/user',
+		'Compta\Controller\APIControllerCreate::addUser'
+	)->bind('add_user');
 	
 	$app->delete(
 		'/api/group/{id}',
