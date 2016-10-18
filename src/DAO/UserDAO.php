@@ -19,7 +19,7 @@
 		}
 		
 		public function delete($id) {
-			//TODO
+			$this->getDb()->delete('users', array('id' => $id));
 		}
 		
 	}
