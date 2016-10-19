@@ -26,6 +26,18 @@
 			return NULL;
 		}
 		
+		private function wrongGroup(Request $request, Application $app) {
+			$usergroup = $request->request->get('usergroup');
+			$group = $app['dao.group']->get($usergroup);
+			if (!$group) {
+				return $app->json(array(
+					'status' => 'KO',
+					'error' => 'Groupe inconnu : '.$usergroup
+				), 400);
+			}
+			return NULL;
+		}
+		
 		private function successfulOperation($result, $app) {
 			return $app->json(array(
 				'records' => $result,
@@ -54,36 +66,28 @@
 		public function addUser(Request $request, Application $app) {
 			$params = ['username', 'usercolor', 'usergroup'];
 			$json = $this->missingParameter($params, $request, $app);
+			if ($json === NULL ) $json = $this->wrongGroup($request, $app);
 			if ($json === NULL ) {
 				$user = ($request->request->has('Id')) ?
 					$app['dao.user']->get($request->request->get('Id')) :
 					new User() ;
-				$usergroup = $request->request->get('usergroup');
-				$group = $app['dao.group']->get($usergroup);
-				if (!$group) {
-					$json = $app->json(array(
-						'status' => 'KO',
-						'error' => 'Groupe inconnu : '.$usergroup
-					), 400);
+				$group = $app['dao.group']->get($request->request->get('usergroup'))
+				                          ->getId();
+				$user->setName($request->request->get('username'))
+					   ->setColor($request->request->get('usercolor'))
+					   ->addGroup($group);
+				$app['dao.user']->save($user);
+				$usergroups = [];
+				foreach ($user->getGroups() as $group) {
+					$usergroups[] = $app['dao.group']->get($group)->getName();
 				}
-				else {
-					$group_id = $group->getId();
-					$user->setName($request->request->get('username'))
-						   ->setColor($request->request->get('usercolor'))
-						   ->addGroup($group_id);
-					$app['dao.user']->save($user);
-					$usergroups = [];
-					foreach ($user->getGroups() as $group) {
-						$usergroups[] = $app['dao.group']->get($group)->getName();
-					}
-					$result = array(
-						'Id' => $user->getId(),
-						'username' => $user->getName(),
-						'usercolor' => $user->getColor(),
-						'usergroups' => $usergroups
-					);
-					$json = $this->successfulOperation($result, $app);
-				}
+				$result = array(
+					'Id' => $user->getId(),
+					'username' => $user->getName(),
+					'usercolor' => $user->getColor(),
+					'usergroups' => $usergroups
+				);
+				$json = $this->successfulOperation($result, $app);
 			}
 			return $json;
 		}
@@ -97,32 +101,41 @@
 				'Concernes'
 			];
 			$json = $this->missingParameter($params, $request, $app);
+			if ($json === NULL ) $json = $this->wrongGroup($request, $app);
 			if ($json === NULL ) {
+				$depense = ($request->request->has('Id')) ?
+					$app['dao.depense']->get($request->request->get('Id')) :
+					new Depense() ;
 				$date = ($request->request->has('Date')) ?
 					$request->request->get('Date') :
 					time() ;
 				$users = explode(',', $request->request->get('Concernes'));
-				$depense = ($request->request->has('Id')) ?
-					$app['dao.depense']->get($request->request->get('Id')) :
-					new Depense() ;
+				$group = $app['dao.group']->get($request->request->get('usergroup'))
+				                          ->getId();
 				$depense->setMontant($request->request->get('Montant'))
-					      ->setDate($date)
-					      ->setName($request->request->get('Description'))
-					      ->setGroupId($request->request->get('usergroup'))
-					      ->setUserId($request->request->get('Payeur'))
-					      ->setUsers($request->request->get('Concernes'));
+				        ->setDate($date)
+				        ->setName($request->request->get('Description'))
+				        ->setGroupId($group)
+				        ->setUserId($request->request->get('Payeur'));
+				foreach ($users as $user) $depense->addUser($user);
 				$app['dao.depense']->save($depense);
+				$users = $depense->getUsers();
+				$users_count = count($users);
+				$users = implode(',', $users);
+				$group = $app['dao.group']->get($depense->getGroupId())->getName();
 				$result = array(
 					'Id' => $depense->getId(),
-					'Montant' => $group->getMontant(),
-					'Date' => $depense->getDate(),
-					'Description' => $depense->getName(),
-					'usergroup' => $depense->getGroupId(),
+					'Montant' => $depense->getMontant(),
 					'Payeur' => $depense->getUserId(),
-					'Concernes' => $depense->getUsers(),
+					'Concernes' => $users,
+					'Date' => $depense->getDate(),
+					'nbConcernes' => $users_count,
+					'usergroup' => $group,
+					'Description' => $depense->getName()
 				);
 				$json = $this->successfulOperation($result, $app);
 			}
+			return $json;
 		}
 		
 	}
