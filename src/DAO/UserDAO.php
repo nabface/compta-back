@@ -6,8 +6,8 @@
 	
 	class UserDAO extends DAO {
 		
-		private function get($info) {
-			$where = ($info == (int) $info) ? 'id = :info' : 'name = :info' ;
+		public function get($info) {
+			$where = (is_numeric($info)) ? 'id = :info' : 'name = :info' ;
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
 			      ->from('users')
@@ -15,7 +15,19 @@
 			      ->setParameter(':info', $info);
 			$statement = $query->execute();
 			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\User');
-			return $statement->fetch();
+			$user = $statement->fetch();
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('mapping_groups')
+			      ->where('user_id = :user_id')
+			      ->setParameter(':user_id', $user->getId());
+			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			$groups = [];
+			foreach ($answer as $row) {
+				$groups[] = $row['group_id'];
+			}
+			$user->setGroups($groups);
+			return $user;
 		}
 		
 		public function findByGroup($group_id) {
@@ -30,16 +42,63 @@
 			return $users;
 		}
 		
-		public function removeFromGroup($group_id) {
-			//TODO
-		}
-		
 		public function save(User $user) {
-			//TODO
+			// create/update entry in 'users' table
+			$data = array(
+				'name' => $user->getName(),
+				'color' => $user->getColor()
+			);
+			$id = $user->getId();
+			if ( $id != NULL)
+				$this->getDb()->update('users', $data, array('id' => $id));
+			else {
+				$this->getDb()->insert('users', $data);
+				$id = $this->getDb()->lastInsertId();
+				$user->setId($id);
+			}
+			// get entries from 'mapping_groups' table
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('mapping_groups')
+			      ->where('user_id = :user_id')
+			      ->setParameter(':user_id', $user->getId());
+			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			$groups = $user->getGroups();
+			// create entries in 'mapping_groups' table
+			foreach ($groups as $group) {
+				$found = false;
+				foreach ($answer as $row)
+					if ($row['group_id'] == $group) $found = true;
+				if (!$found)
+					$this->getDb()->insert('mapping_groups', array(
+						'user_id' => $id,
+						'group_id' => $group
+					));
+			}
+			// remove entries in 'mapping_groups' table
+			foreach ($answer as $row) {
+				$found = false;
+				foreach ($groups as $group)
+					if ($row['group_id'] == $group) $found = true;
+				if (!$found) {
+					$query = $this->getDb()->createQueryBuilder();
+					$query->delete('*')
+					      ->from('mapping_groups')
+					      ->where('user_id = :user_id')
+					      ->andWhere('group_id = :group_id')
+					      ->setParameter(':user_id', $id)
+					      ->setParameter(':group_id', $group)
+					      ->execute();
+				}
+			}
 		}
 		
 		public function delete($id) {
 			$this->getDb()->delete('users', array('id' => $id));
+		}
+		
+		public function removeFromGroup($group_id) {
+			//TODO
 		}
 		
 	}
