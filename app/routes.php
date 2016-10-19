@@ -54,7 +54,6 @@
 		'Compta\Controller\APIControllerDelete::deleteUser'
 	);
 	
-	// NOT WORKING
 	$app->delete(
 		'/admin/depense/{id}',
 		'Compta\Controller\APIControllerDelete::deleteDepense'

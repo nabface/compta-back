@@ -15,6 +15,7 @@
 			$statement = $query->execute();
 			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
 			$depense = $statement->fetch();
+			if (!$depense) return false;
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
 			      ->from('mapping_users')
@@ -106,16 +107,16 @@
 			}
 		}
 		
+		public function delete($id) {
+			$this->getDb()->delete('depenses', array('id' => $id));
+		}
+		
 		public function deleteByGroup($group_id) {
 			//TODO
 		}
 		
 		public function deleteByUser($user_id) {
 			//TODO
-		}
-		
-		public function delete($id) {
-			$this->getDb()->delete('depenses', array('id' => $id));
 		}
 		
 	}
