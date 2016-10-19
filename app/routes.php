@@ -26,17 +26,17 @@
 	);
 	
 	$app->post(
-		'/admin/group/add',
+		'/admin/group',
 		'Compta\Controller\APIControllerCreate::addGroup'
 	);
 	
 	$app->post(
-		'/admin/user/add',
+		'/admin/user',
 		'Compta\Controller\APIControllerCreate::addUser'
 	);
 	
 	$app->post(
-		'/admin/depense/add',
+		'/admin/depense',
 		'Compta\Controller\APIControllerCreate::addDepense'
 	);
 	
