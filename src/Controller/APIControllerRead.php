@@ -6,6 +6,10 @@
 	
 	class APIControllerRead {
 		
+		public function getGroups(Application $app) {
+			//TODO
+		}
+		
 		public function getUsers($group_id, Application $app) {
 			$users = $app['dao.user']->findByGroup($group_id);
 			$result = [];

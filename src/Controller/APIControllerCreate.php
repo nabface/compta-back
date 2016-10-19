@@ -8,7 +8,7 @@
 	use Compta\Domain\Group;
 	use Compta\Domain\User;
 	
-	class ApiController {
+	class APIControllerCreate {
 		
 		public function addGroup(Request $request, Application $app) {
 			if (!$request->request->has('name'))
@@ -21,6 +21,32 @@
 			return $app->json(array(
 				'id' => $group->getId(),
 				'name' => $group->getName()
+			), 201);
+		}
+		
+		public function addUser(Request $request, Application $app) {
+			if (!$request->request->has('username'))
+				return $app->json('Missing required parameter: username', 400);
+			else
+				$name = $request->request->get('username');
+			if (!$request->request->has('usercolor'))
+				return $app->json('Missing required parameter: usercolor', 400);
+			else
+				$color = $request->request->get('usercolor');
+			if (!$request->request->has('usergroup'))
+				return $app->json('Missing required parameter: usergroup', 400);
+			else
+				$group_id = $request->request->get('usergroup');
+			$user = new User();
+			$user->setName($name)
+			     ->setColor($color)
+			     ->addGroup($group_id);
+			$app['dao.user']->save($user);
+			return $app->json(array(
+				'Id' => $user->getId(),
+				'username' => $user->getName(),
+				'usercolor' => $user->getColor(),
+				'usergroups' => $user->getGroups()
 			), 201);
 		}
 		
@@ -65,50 +91,6 @@
 				'user_id' => $depense->getUserId(),
 				'users' => $depense->getUsers(),
 			), 201);
-		}
-		
-		public function addUser(Request $request, Application $app) {
-			if (!$request->request->has('username'))
-				return $app->json('Missing required parameter: username', 400);
-			else
-				$name = $request->request->get('username');
-			if (!$request->request->has('usercolor'))
-				return $app->json('Missing required parameter: usercolor', 400);
-			else
-				$color_id = $request->request->get('usercolor');
-			if (!$request->request->has('usergroup'))
-				return $app->json('Missing required parameter: usergroup', 400);
-			else
-				$group_id = $request->request->get('usergroup');
-			$user = new User();
-			$user->setName($name)
-			     ->setColor($color_id)
-			     ->addGroup($group_id);
-			$app['dao.user']->save($user);
-			return $app->json(array(
-				'id' => $user->getId(),
-				'name' => $user->getName(),
-				'color_id' => $user->getColorId(),
-				'groups' => $user->getGroups()
-			), 201);
-		}
-		
-		public function deleteGroup($id, Application $app) {
-			$app['dao.depense']->deleteByGroup($id);
-			$app['dao.user']->removeFromGroup($id);
-			$app['dao.group']->delete($id);
-			return $app->json('No Content', 204);
-		}
-		
-		public function deleteDepense($id, Application $app) {
-			$app['dao.depense']->delete($id);
-			return $app->json('No Content', 204);
-		}
-		
-		public function deleteUser($id, Application $app) {
-			$app['dao.depense']->deleteByUser($id);
-			$app['dao.user']->delete($id);
-			return $app->json('No Content', 204);
 		}
 		
 	}
