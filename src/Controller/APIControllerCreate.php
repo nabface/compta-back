@@ -10,87 +10,115 @@
 	
 	class APIControllerCreate {
 		
-		public function addGroup(Request $request, Application $app) {
-			if (!$request->request->has('name'))
-				return $app->json('Missing required parameter: name', 400);
-			else
-				$name = $request->request->get('name');
-			$group = new Group();
-			$group->setName($name);
-			$app['dao.group']->save($group);
+		private function missingParameter(array $params, Request $request, Application $app) {
+			foreach ($params as $param) {
+				if (!$request->request->has($param)) {
+					return $app->json(array(
+						'status' => 'KO',
+						'error' => 'Paramètre requis manquant : '.$param
+					), 400);
+				}
+			}
+			return NULL;
+		}
+		
+		private function successfulOperation($result, $app) {
 			return $app->json(array(
-				'id' => $group->getId(),
-				'name' => $group->getName()
+				'records' => $result,
+				'status' => 'OK'
 			), 201);
+		}
+		
+		public function addGroup(Request $request, Application $app) {
+			$params = ['name'];
+			$json = $this->missingParameter($params, $request, $app);
+			if ($json === NULL ) {
+				$group = ($request->request->has('id')) ?
+					$app['dao.group']->get($request->request->get('id')) :
+					new Group() ;
+				$group->setName($request->request->get('name'));
+				$app['dao.group']->save($group);
+				$result = array(
+					'id' => $group->getId(),
+					'name' => $group->getName()
+				);
+				$json = $this->successfulOperation($result, $app);
+			}
+			return $json;
 		}
 		
 		public function addUser(Request $request, Application $app) {
-			if (!$request->request->has('username'))
-				return $app->json('Missing required parameter: username', 400);
-			else
-				$name = $request->request->get('username');
-			if (!$request->request->has('usercolor'))
-				return $app->json('Missing required parameter: usercolor', 400);
-			else
-				$color = $request->request->get('usercolor');
-			if (!$request->request->has('usergroup'))
-				return $app->json('Missing required parameter: usergroup', 400);
-			else
-				$group_id = $request->request->get('usergroup');
-			$user = new User();
-			$user->setName($name)
-			     ->setColor($color)
-			     ->addGroup($group_id);
-			$app['dao.user']->save($user);
-			return $app->json(array(
-				'Id' => $user->getId(),
-				'username' => $user->getName(),
-				'usercolor' => $user->getColor(),
-				'usergroups' => $user->getGroups()
-			), 201);
+			$params = ['username', 'usercolor', 'usergroup'];
+			$json = $this->missingParameter($params, $request, $app);
+			if ($json === NULL ) {
+				$user = ($request->request->has('Id')) ?
+					$app['dao.user']->get($request->request->get('Id')) :
+					new User() ;
+				$usergroup = $request->request->get('usergroup');
+				$group = $app['dao.group']->get($usergroup);
+				if (!$group) {
+					$json = $app->json(array(
+						'status' => 'KO',
+						'error' => 'Groupe inconnu : '.$usergroup
+					), 400);
+				}
+				else {
+					$group_id = $group->getId();
+					$user->setName($request->request->get('username'))
+						   ->setColor($request->request->get('usercolor'))
+						   ->addGroup($group_id);
+					$app['dao.user']->save($user);
+					$usergroups = [];
+					foreach ($user->getGroups() as $group) {
+						$usergroups[] = $app['dao.group']->get($group)->getName();
+					}
+					$result = array(
+						'Id' => $user->getId(),
+						'username' => $user->getName(),
+						'usercolor' => $user->getColor(),
+						'usergroups' => $usergroups
+					);
+					$json = $this->successfulOperation($result, $app);
+				}
+			}
+			return $json;
 		}
 		
 		public function addDepense(Request $request, Application $app) {
-			if (!$request->request->has('Montant'))
-				return $app->json('Missing required parameter: Montant', 400);
-			else
-				$montant = $request->request->get('Montant');
-			$date = ($request->request->has('Date')) ?
-				$request->request->get('Date') :
-				time() ;
-			if (!$request->request->has('Description'))
-				return $app->json('Missing required parameter: Description', 400);
-			else
-				$name = $request->request->get('Description');
-			if (!$request->request->has('usergroup'))
-				return $app->json('Missing required parameter: usergroup', 400);
-			else
-				$group_id = $request->request->get('usergroup');
-			if (!$request->request->has('Payeur'))
-				return $app->json('Missing required parameter: Payeur', 400);
-			else
-				$user_id = $request->request->get('Payeur');
-			if (!$request->request->has('Concernes'))
-				return $app->json('Missing required parameter: Concernes', 400);
-			else
+			$params = [
+				'Montant',
+				'Description',
+				'usergroup',
+				'Payeur',
+				'Concernes'
+			];
+			$json = $this->missingParameter($params, $request, $app);
+			if ($json === NULL ) {
+				$date = ($request->request->has('Date')) ?
+					$request->request->get('Date') :
+					time() ;
 				$users = explode(',', $request->request->get('Concernes'));
-			$depense = new Depense();
-			$depense->setMontant($montant)
-			        ->setDate($date)
-			        ->setName($name)
-			        ->setGroupId($group_id)
-			        ->setUserId($user_id)
-			        ->setUsers($users);
-			$app['dao.depense']->save($depense);
-			return $app->json(array(
-				'id' => $depense->getId(),
-				'montant' => $group->getMontant(),
-				'date' => $depense->getDate(),
-				'name' => $depense->getName(),
-				'group_id' => $depense->getGroupId(),
-				'user_id' => $depense->getUserId(),
-				'users' => $depense->getUsers(),
-			), 201);
+				$depense = ($request->request->has('Id')) ?
+					$app['dao.depense']->get($request->request->get('Id')) :
+					new Depense() ;
+				$depense->setMontant($request->request->get('Montant'))
+					      ->setDate($date)
+					      ->setName($request->request->get('Description'))
+					      ->setGroupId($request->request->get('usergroup'))
+					      ->setUserId($request->request->get('Payeur'))
+					      ->setUsers($request->request->get('Concernes'));
+				$app['dao.depense']->save($depense);
+				$result = array(
+					'Id' => $depense->getId(),
+					'Montant' => $group->getMontant(),
+					'Date' => $depense->getDate(),
+					'Description' => $depense->getName(),
+					'usergroup' => $depense->getGroupId(),
+					'Payeur' => $depense->getUserId(),
+					'Concernes' => $depense->getUsers(),
+				);
+				$json = $this->successfulOperation($result, $app);
+			}
 		}
 		
 	}
