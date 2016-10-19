@@ -10,7 +10,11 @@
 	
 	class APIControllerCreate {
 		
-		private function missingParameter(array $params, Request $request, Application $app) {
+		private function missingParameter(
+			array $params,
+			Request $request,
+			Application $app
+		) {
 			foreach ($params as $param) {
 				if (!$request->request->has($param)) {
 					return $app->json(array(
