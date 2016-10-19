@@ -6,6 +6,17 @@
 	
 	class DepenseDAO extends DAO {
 		
+		private function get($id) {
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('users')
+			      ->where('id = :id')
+			      ->setParameter(':id', $id);
+			$statement = $query->execute();
+			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
+			return $statement->fetch();
+		}
+		
 		public function findByGroup($group_id) {
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
