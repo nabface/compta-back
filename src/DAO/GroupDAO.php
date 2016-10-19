@@ -19,6 +19,15 @@
 			return $group;
 		}
 		
+		public function listAll() {
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('groups');
+			$statement = $query->execute();
+			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Group');
+			return $statement->fetchAll();
+		}
+		
 		public function findByUser($user_id) {
 			// TODO
 			return $this;

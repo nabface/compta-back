@@ -7,7 +7,18 @@
 	class APIControllerRead {
 		
 		public function getGroups(Application $app) {
-			//TODO
+			$groups = $app['dao.group']->listAll();
+			$result = [];
+			foreach ($groups as $group) {
+				$result[] = array(
+					'id' => $group->getId(),
+					'name' => $group->getName()
+				);
+			}
+			return $app->json(array(
+				'records' => $result,
+				'status' => 'OK'
+			), 200);
 		}
 		
 		public function getUsers($group_id, Application $app) {
@@ -22,7 +33,8 @@
 				);
 			}
 			return $app->json(array(
-				'records' => $result
+				'records' => $result,
+				'status' => 'OK'
 			), 200);
 		}
 		
@@ -34,15 +46,16 @@
 					'Id' => $depense->getId(),
 					'Montant' => $depense->getMontant(),
 					'Payeur' => $depense->getUserId(),
-					'Concernes' => $depense->getUsers(),
+					'Concernes' => implode(',', $depense->getUsers()),
 					'Date' => $depense->getDate(),
-					'nbConcernes' => 'TODO',
+					'nbConcernes' => count($depense->getUsers()),
 					'usergroup' => $app['dao.group']->get($group_id)->getName(),
 					'Description' => $depense->getName()
 				);
 			}
 			return $app->json(array(
-				'records' => $result
+				'records' => $result,
+				'status' => 'OK'
 			), 200);
 		}
 		
