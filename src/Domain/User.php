@@ -54,8 +54,8 @@
 		}
 		
 		public function addGroup($group_id) {
-			$groups = $this->getGroups;
-			if (!in_array($group_id, $groups)) {
+			$groups = $this->getGroups();
+			if (!is_array($groups) || !in_array($group_id, $groups)) {
 				$groups[] = $group_id;
 				$this->setGroups($groups);
 			}
