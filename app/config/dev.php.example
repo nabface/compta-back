@@ -9,7 +9,7 @@
 		'user'     => 'user_name',
 		'password' => 'user_password',
 	);
-	$app['monolog.level'] = 'INFO';
+	$app['monolog.level'] = 'debug';
 	$app['debug'] = true;
 	
 ?>
