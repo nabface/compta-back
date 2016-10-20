@@ -75,6 +75,15 @@
 			return $this;
 		}
 		
+		public function removeUser($user_id) {
+			$users = $this->getUsers();
+			$users = array_filter($users, function($id) {
+				return ($id != $user_id)
+			});
+			$this->setUsers($users);
+			return $this;
+		}
+		
 	}
 	
 ?>
