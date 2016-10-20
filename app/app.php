@@ -21,6 +21,7 @@
 	$app['dao.group'] = new Compta\DAO\GroupDAO($app['db']);
 	$app['dao.user'] = new Compta\DAO\UserDAO($app['db']);
 	$app['dao.depense'] = new Compta\DAO\DepenseDAO($app['db']);
+	$app['dao.user']->setDepenseDAO($app['dao.depense']);
 	
 	// register JSON data decoder for JSON requests
 	$app->before(function (Request $request) {

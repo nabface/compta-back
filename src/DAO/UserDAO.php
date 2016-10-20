@@ -6,6 +6,14 @@
 	
 	class UserDAO extends DAO {
 		
+		private $depenseDAO;
+		
+		public function getDepenseDAO() { return $this->depenseDAO; }
+		
+		public function setDepenseDAO(DepenseDAO $depenseDAO) {
+			$this->depenseDAO = $depenseDAO;
+		}
+		
 		public function get($info) {
 			$where = (is_numeric($info)) ? 'id = :info' : 'name = :info' ;
 			$query = $this->getDb()->createQueryBuilder();
@@ -81,24 +89,35 @@
 				foreach ($groups as $group)
 					if ($row['group_id'] == $group) $found = true;
 				if (!$found) {
-					$query = $this->getDb()->createQueryBuilder();
-					$query->delete('*')
-					      ->from('mapping_groups')
-					      ->where('user_id = :user_id')
-					      ->andWhere('group_id = :group_id')
-					      ->setParameter(':user_id', $id)
-					      ->setParameter(':group_id', $group)
-					      ->execute();
+					$this->getDb()->delete('mapping_groups', array(
+						'user_id' => $id,
+						'group_id' => $row['group_id']
+					));
 				}
 			}
 		}
 		
 		public function delete($id) {
 			$this->getDb()->delete('users', array('id' => $id));
+			$this->getDb()->delete('mapping_groups', array('user_id' => $id));
+			$this->getDepenseDAO()->deleteByUser($id);
 		}
 		
 		public function removeFromGroup($group_id) {
-			//TODO
+			// get entries from 'mapping_groups' table
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('mapping_groups')
+			      ->where('group_id = :group_id')
+			      ->setParameter(':group_id', $group_id);
+			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			// remove unreferenced entries from 'users' table
+			foreach ($answer as $row) {
+				$id = $row['user_id'];
+				$user = $this->get($id)->removeGroup($group_id);
+				if ($user->getGroups() == NULL) $this->delete($id);
+				else $this->save($user);
+			}
 		}
 		
 	}
