@@ -58,11 +58,14 @@
 			return $this;
 		}
 		public function setUsers(array $users) {
-			foreach ($users as $user) {
-				$user = (int) $users;
-				if ($user <= 0) return NULL;
+			if (count($users) == 0) $this->users = NULL;
+			else {
+				foreach ($users as $user) {
+					$user = (int) $users;
+					if ($user <= 0) return NULL;
+				}
+				$this->users = $users;
 			}
-			$this->users = $users;
 			return $this;
 		}
 		
@@ -77,10 +80,10 @@
 		
 		public function removeUser($user_id) {
 			$users = $this->getUsers();
-			$users = array_filter($users, function($id) {
-				return ($id != $user_id)
-			});
-			$this->setUsers($users);
+			$users_new = [];
+			foreach ($users as $id)
+				if ($id != $user_id) $users_new[] = $id;
+			$this->setUsers($users_new);
 			return $this;
 		}
 		
