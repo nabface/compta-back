@@ -42,7 +42,6 @@
 		'Compta\Controller\APIControllerCreate::addDepense'
 	);
 	
-	// NOT WORKING
 	$app->delete(
 		'/admin/group/{id}',
 		'Compta\Controller\APIControllerDelete::deleteGroup'
