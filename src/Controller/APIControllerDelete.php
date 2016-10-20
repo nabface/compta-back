@@ -38,10 +38,20 @@
 		}
 		
 		public function deleteGroup($id, Application $app) {
-			$app['dao.depense']->deleteByGroup($id);
-			$app['dao.user']->removeFromGroup($id);
-			$app['dao.group']->delete($id);
-			return $app->json('No Content', 204);
+			if ($app['dao.group']->get($id)) {
+				$app['dao.depense']->deleteByGroup($id);
+				$app['dao.user']->removeFromGroup($id);
+				$app['dao.group']->delete($id);
+				return $app->json(array(
+					'status' => 'OK'
+				), 200);
+			}
+			else {
+				return $app->json(array(
+					'status' => 'KO',
+					'error' => 'Pas de groupe enregistré avec l’id '.$id
+				), 400);
+			}
 		}
 		
 	}
