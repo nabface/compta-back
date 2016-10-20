@@ -136,7 +136,20 @@
 		}
 		
 		public function deleteByGroup($group_id) {
-			//TODO
+			// remove dependent entries from 'depenses' table
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('*')
+			      ->from('depenses')
+			      ->where('group_id = :group_id')
+			      ->setParameter(':group_id', $group_id);
+			$statement = $query->execute();
+			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
+			$depenses = $statement->fetchAll();
+			foreach ($depenses as $depense) {
+				$id = $depense->getId();
+				$this->delete($id);
+				$this->getDb()->delete('mapping_users', array('depense_id' => $id));
+			}
 		}
 		
 	}
