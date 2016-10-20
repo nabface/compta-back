@@ -37,11 +37,14 @@
 			return $this;
 		}
 		public function setGroups(array $groups) {
-			foreach ($groups as $group) {
-				$group = (int) $groups;
-				if ($group <= 0) return NULL;
+			if (count($groups) == 0) $this->groups = NULL;
+			else {
+				foreach ($groups as $group) {
+					$group = (int) $groups;
+					if ($group <= 0) return NULL;
+				}
+				$this->groups = $groups;
 			}
-			$this->groups = $groups;
 			return $this;
 		}
 		public function setDepenses(array $depenses) {
@@ -59,6 +62,15 @@
 				$groups[] = $group_id;
 				$this->setGroups($groups);
 			}
+			return $this;
+		}
+		
+		public function removeGroup($group_id) {
+			$groups = $this->getGroups();
+			$groups_new = [];
+			foreach ($groups as $id)
+				if ($id != $group_id) $groups_new[] = $id;
+			$this->setGroups($groups_new);
 			return $this;
 		}
 		
