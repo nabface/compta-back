@@ -11,6 +11,11 @@
 	// register service providers
 	$app->register(new Silex\Provider\DoctrineServiceProvider());
 	$app->register(new Silex\Provider\RoutingServiceProvider());
+	$app->register(new Silex\Provider\MonologServiceProvider(), array(
+		'monolog.logfile' => __DIR__.'/../var/logs/compta.log',
+		'monolog.name' => 'Compta',
+		'monolog.level' => $app['monolog.level']
+	));
 	
 	//register services
 	$app['dao.group'] = new Compta\DAO\GroupDAO($app['db']);
