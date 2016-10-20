@@ -48,7 +48,6 @@
 		'Compta\Controller\APIControllerDelete::deleteGroup'
 	);
 	
-	// NOT WORKING
 	$app->delete(
 		'/admin/user/{id}',
 		'Compta\Controller\APIControllerDelete::deleteUser'
