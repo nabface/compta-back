@@ -13,14 +13,16 @@
 		}
 		
 		public function testGetUsers() {
+			global $TESTS;
 			$client = $this->createClient();
-			$crawler = $client->request('GET', '/group/1/users');
+			$crawler = $client->request('GET', '/group/'.$TESTS['group_id'].'/users');
 			$this->assertTrue($client->getResponse()->isOk());
 		}
 		
 		public function testGetDepenses() {
+			global $TESTS;
 			$client = $this->createClient();
-			$crawler = $client->request('GET', '/group/1/depenses');
+			$crawler = $client->request('GET', '/group/'.$TESTS['group_id'].'/depenses');
 			$this->assertTrue($client->getResponse()->isOk());
 		}
 		
