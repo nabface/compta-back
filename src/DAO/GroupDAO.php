@@ -27,11 +27,6 @@
 			return $statement->fetchAll();
 		}
 		
-		public function findByUser($user_id) {
-			// TODO
-			return $this;
-		}
-		
 		public function save(Group $group) {
 			$data = array(
 				'name' => $group->getName()
