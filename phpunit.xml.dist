@@ -13,7 +13,9 @@
 >
 	<testsuites>
 		<testsuite name="Compta Test Suite">
-			<directory>./tests/</directory>
+			<file>./tests/Controller/APIControllerCreateTest.php</file>
+			<file>./tests/Controller/APIControllerReadTest.php</file>
+			<file>./tests/Controller/APIControllerDeleteTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
