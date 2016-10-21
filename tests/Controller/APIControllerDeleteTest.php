@@ -7,10 +7,11 @@
 		use Compta\Tests\TestCommon;
 		
 		public function testDeleteDepenseSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/depense/274'
+					'/admin/depense/'.$TESTS['depense_id']
 				);
 			$this->assertEquals(
 				200,
@@ -29,10 +30,11 @@
 		}
 		
 		public function testDeleteDepenseFailure() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/depense/274'
+					'/admin/depense/'.$TESTS['depense_id']
 				);
 			$this->assertEquals(
 				400,
@@ -45,16 +47,17 @@
 				)
 			);
 			$this->assertContains(
-				'"error":"Pas de d\u00e9pense enregistr\u00e9e avec l\u2019id 274"',
+				'"error":"Pas de d\u00e9pense enregistr\u00e9e avec l\u2019id '.$TESTS['depense_id'].'"',
 				$client->getResponse()->getContent()
 			);
 		}
 		
 		public function testDeleteUserSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/user/104'
+					'/admin/user/'.$TESTS['user_id']
 				);
 			$this->assertEquals(
 				200,
@@ -73,10 +76,11 @@
 		}
 		
 		public function testDeleteUserFailure() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/user/104'
+					'/admin/user/'.$TESTS['user_id']
 				);
 			$this->assertEquals(
 				400,
@@ -89,16 +93,17 @@
 				)
 			);
 			$this->assertContains(
-				'"error":"Pas d\u2019utilisateur enregistr\u00e9 avec l\u2019id 104"',
+				'"error":"Pas d\u2019utilisateur enregistr\u00e9 avec l\u2019id '.$TESTS['user_id'].'"',
 				$client->getResponse()->getContent()
 			);
 		}
 		
 		public function testDeleteGroupSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/group/2'
+					'/admin/group/'.$TESTS['group_id']
 				);
 			$this->assertEquals(
 				200,
@@ -117,10 +122,11 @@
 		}
 		
 		public function testDeleteGroupFailure() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/group/2'
+					'/admin/group/'.$TESTS['group_id']
 				);
 			$this->assertEquals(
 				400,
@@ -133,7 +139,7 @@
 				)
 			);
 			$this->assertContains(
-				'"error":"Pas de groupe enregistr\u00e9 avec l\u2019id 2"',
+				'"error":"Pas de groupe enregistr\u00e9 avec l\u2019id '.$TESTS['group_id'].'"',
 				$client->getResponse()->getContent()
 			);
 		}

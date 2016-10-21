@@ -7,6 +7,7 @@
 		use Compta\Tests\TestCommon;
 		
 		public function testAddGroupSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'POST',
@@ -26,10 +27,12 @@
 					'application/json'
 				)
 			);
+			$json = $client->getResponse()->getContent();
 			$this->assertContains(
 				'"name":"test_group"',
-				$client->getResponse()->getContent()
+				$json
 			);
+			$TESTS['group_id'] = json_decode($json, true)['records']['id'];
 		}
 		
 		public function testAddGroupFailure() {
@@ -59,6 +62,7 @@
 		}
 		
 		public function testAddUserSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'POST',
@@ -78,14 +82,16 @@
 					'application/json'
 				)
 			);
+			$json = $client->getResponse()->getContent();
 			$this->assertContains(
 				'"username":"test_user"',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"usercolor":"test_color"',
-				$client->getResponse()->getContent()
+				$json
 			);
+			$TESTS['user_id'] = json_decode($json, true)['records']['Id'];
 		}
 		
 		public function testAddUserFailure() {
@@ -115,6 +121,7 @@
 		}
 		
 		public function testAddDepenseSuccess() {
+			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'POST',
@@ -134,30 +141,32 @@
 					'application/json'
 				)
 			);
+			$json = $client->getResponse()->getContent();
 			$this->assertContains(
 				'"Montant":100',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"Payeur":1',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"Concernes":"2,3,4"',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"nbConcernes":3',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"usergroup":"test_group"',
-				$client->getResponse()->getContent()
+				$json
 			);
 			$this->assertContains(
 				'"Description":"test_depense"',
-				$client->getResponse()->getContent()
+				$json
 			);
+			$TESTS['depense_id'] = json_decode($json, true)['records']['Id'];
 		}
 		
 		public function testAddDepenseFailure() {
