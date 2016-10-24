@@ -15,18 +15,6 @@
 		'Compta\Controller\APIControllerRead::getDepenses'
 	);
 	
-	// NOT WORKING
-	$app->get(
-		'/logout',
-		'Compta\Controller\APIControllerAdmin::logout'
-	);
-	
-	// NOT WORKING
-	$app->post(
-		'/login',
-		'Compta\Controller\APIControllerAdmin::login'
-	);
-	
 	$app->post(
 		'/admin/group',
 		'Compta\Controller\APIControllerCreate::addGroup'
