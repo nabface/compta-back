@@ -7,6 +7,7 @@
 	class APIControllerDelete {
 		
 		public function deleteDepense($id, Application $app) {
+			// TODO - check that user is logged in as admin
 			if ($app['dao.depense']->get($id)) {
 				$app['dao.depense']->delete($id);
 				return $app->json(array(
@@ -22,6 +23,7 @@
 		}
 		
 		public function deleteUser($id, Application $app) {
+			// TODO - check that user is logged in as admin
 			if ($app['dao.user']->get($id)) {
 				$app['dao.depense']->deleteByUser($id);
 				$app['dao.user']->delete($id);
@@ -38,6 +40,7 @@
 		}
 		
 		public function deleteGroup($id, Application $app) {
+			// TODO - check that user is logged in as admin
 			if ($app['dao.group']->get($id)) {
 				$app['dao.depense']->deleteByGroup($id);
 				$app['dao.user']->removeFromGroup($id);

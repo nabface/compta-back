@@ -32,6 +32,7 @@
 		}
 		
 		public function addGroup(Request $request, Application $app) {
+			// TODO - check that user is logged in as admin
 			$params = ['name'];
 			$json = $this->missingParameter($params, $request, $app);
 			if ($json === NULL ) {
@@ -50,6 +51,7 @@
 		}
 		
 		public function addUser(Request $request, Application $app) {
+			// TODO - check that user is logged in as admin
 			$params = ['username', 'usercolor', 'usergroup'];
 			$json = $this->missingParameter($params, $request, $app);
 			if ($json === NULL ) $json = $this->wrongGroup($request, $app);
@@ -79,6 +81,7 @@
 		}
 		
 		public function addDepense(Request $request, Application $app) {
+			// TODO - check that user is logged in as admin
 			$params = [
 				'Montant',
 				'Description',

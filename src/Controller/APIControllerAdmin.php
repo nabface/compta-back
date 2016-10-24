@@ -26,7 +26,7 @@
 				}
 				else {
 					$key = base64_encode(random_bytes(64));
-					$_SESSION['api.key'] = $key;
+					// TODO - store $key on server
 					$json = $app->json(array(
 						'key' => $key,
 						'status' => 'OK'
@@ -37,7 +37,7 @@
 		}
 		
 		public function logout(Application $app) {
-			if (isset($_SESSION['api.key'])) unset($_SESSION['api.key']);
+			// TODO - remove $key from server
 			return $app->json(array(
 				'status' => 'OK'
 			), 200);
