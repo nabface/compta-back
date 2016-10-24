@@ -8,6 +8,7 @@
 	class APIControllerAdmin {
 		
 		use ParseJSON;
+		use Security;
 		
 		public function login(Request $request, Application $app) {
 			$params = ['name','password'];
@@ -40,15 +41,9 @@
 		}
 		
 		public function logout(Request $request, Application $app) {
-			if (!$request->headers->has('apikey')) {
-				$json = $app->json(array(
-					'status' => 'KO',
-					'error' => 'Le header \'apikey\' n’est pas défini'
-				), 400);
-			}
-			else {
+			$json = $this->isLoggedIn($request, $app);
+			if ($json === NULL) {
 				$key = $request->headers->get('apikey');
-				$found = false;
 				$keylist = file(__DIR__.'/../../cache/keylist.txt');
 				$keylist = array_map("rtrim", $keylist);
 				$length = count($keylist);
@@ -56,18 +51,11 @@
 				for ($i = 0; $i < $length; $i += 2) {
 					if ($keylist[$i] != $key)
 						fwrite($file, $keylist[$i]."\n".$keylist[($i + 1)]."\n");
-					else $found = true;
 				}
 				fclose($file);
-				if ($found)
-					$json = $app->json(array(
-						'status' => 'OK'
-					), 200);
-				else
-					$json = $app->json(array(
-						'status' => 'KO',
-						'error' => 'La clé d’API fournie n’est pas reconnue'
-					), 400);
+				$json = $app->json(array(
+					'status' => 'OK'
+				), 200);
 			}
 			return $json;
 		}
