@@ -9,9 +9,9 @@ Ubuntu :
 
 ## Installation
 
-Clonez la branche "noauth" du dépôt :
+Clonez la branche "1.0" du dépôt :
 
-	$ git clone -b noauth https://github.com/vv221/compta-back
+	$ git clone -b 1.0 https://github.com/vv221/compta-back
 	$ cd compta-back
 
 Ajoutez les droits d’écriture pour votre serveur web sur le répertoire logs :
