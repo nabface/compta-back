@@ -13,9 +13,11 @@
 >
 	<testsuites>
 		<testsuite name="Compta Test Suite">
+			<file>./tests/Controller/APIControllerLoginTest.php</file>
 			<file>./tests/Controller/APIControllerCreateTest.php</file>
 			<file>./tests/Controller/APIControllerReadTest.php</file>
 			<file>./tests/Controller/APIControllerDeleteTest.php</file>
+			<file>./tests/Controller/APIControllerLogoutTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>
