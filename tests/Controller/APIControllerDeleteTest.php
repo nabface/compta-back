@@ -6,12 +6,37 @@
 		
 		use Compta\Tests\TestCommon;
 		
+		public function testDeleteDepenseUnauth() {
+			$client = $this->createClient();
+			$crawler = $client->request(
+					'DELETE',
+					'/admin/depense/1'
+				);
+			$this->assertEquals(
+				400,
+				$client->getResponse()->getStatusCode()
+			);
+			$this->assertTrue(
+				$client->getResponse()->headers->contains(
+					'Content-Type',
+					'application/json'
+				)
+			);
+			$this->assertContains(
+				'"error":"Le header \u0027apikey\u0027 n\u2019est pas d\u00e9fini"',
+				$client->getResponse()->getContent()
+			);
+		}
+		
 		public function testDeleteDepenseSuccess() {
 			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/depense/'.$TESTS['depense_id']
+					'/admin/depense/'.$TESTS['depense_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				200,
@@ -34,7 +59,10 @@
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/depense/'.$TESTS['depense_id']
+					'/admin/depense/'.$TESTS['depense_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				400,
@@ -52,12 +80,37 @@
 			);
 		}
 		
+		public function testDeleteUserUnauth() {
+			$client = $this->createClient();
+			$crawler = $client->request(
+					'DELETE',
+					'/admin/user/1'
+				);
+			$this->assertEquals(
+				400,
+				$client->getResponse()->getStatusCode()
+			);
+			$this->assertTrue(
+				$client->getResponse()->headers->contains(
+					'Content-Type',
+					'application/json'
+				)
+			);
+			$this->assertContains(
+				'"error":"Le header \u0027apikey\u0027 n\u2019est pas d\u00e9fini"',
+				$client->getResponse()->getContent()
+			);
+		}
+		
 		public function testDeleteUserSuccess() {
 			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/user/'.$TESTS['user_id']
+					'/admin/user/'.$TESTS['user_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				200,
@@ -80,7 +133,10 @@
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/user/'.$TESTS['user_id']
+					'/admin/user/'.$TESTS['user_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				400,
@@ -98,12 +154,37 @@
 			);
 		}
 		
+		public function testDeleteGroupUnauth() {
+			$client = $this->createClient();
+			$crawler = $client->request(
+					'DELETE',
+					'/admin/group/1'
+				);
+			$this->assertEquals(
+				400,
+				$client->getResponse()->getStatusCode()
+			);
+			$this->assertTrue(
+				$client->getResponse()->headers->contains(
+					'Content-Type',
+					'application/json'
+				)
+			);
+			$this->assertContains(
+				'"error":"Le header \u0027apikey\u0027 n\u2019est pas d\u00e9fini"',
+				$client->getResponse()->getContent()
+			);
+		}
+		
 		public function testDeleteGroupSuccess() {
 			global $TESTS;
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/group/'.$TESTS['group_id']
+					'/admin/group/'.$TESTS['group_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				200,
@@ -126,7 +207,10 @@
 			$client = $this->createClient();
 			$crawler = $client->request(
 					'DELETE',
-					'/admin/group/'.$TESTS['group_id']
+					'/admin/group/'.$TESTS['group_id'],
+					array(),
+					array(),
+					array('HTTP_apikey' => $TESTS['apikey'])
 				);
 			$this->assertEquals(
 				400,
