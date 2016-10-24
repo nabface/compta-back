@@ -11,7 +11,6 @@
 	// register service providers
 	$app->register(new Silex\Provider\DoctrineServiceProvider());
 	$app->register(new Silex\Provider\RoutingServiceProvider());
-	$app->register(new Silex\Provider\SessionServiceProvider());
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
 		'monolog.logfile' => __DIR__.'/../logs/dev.log',
 		'monolog.name' => 'Compta',
