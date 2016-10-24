@@ -26,7 +26,10 @@
 				}
 				else {
 					$key = base64_encode(random_bytes(64));
-					// TODO - store $key on server
+					$keyexpiration = time() + 1500;
+					$keylist = fopen(__DIR__.'/../../cache/keylist.txt', 'a');
+					fwrite($keylist, $key."\n".$keyexpiration."\n");
+					fclose($keylist);
 					$json = $app->json(array(
 						'key' => $key,
 						'status' => 'OK'
@@ -36,11 +39,37 @@
 			return $json;
 		}
 		
-		public function logout(Application $app) {
-			// TODO - remove $key from server
-			return $app->json(array(
-				'status' => 'OK'
-			), 200);
+		public function logout(Request $request, Application $app) {
+			if (!$request->headers->has('apikey')) {
+				$json = $app->json(array(
+					'status' => 'KO',
+					'error' => 'Le header \'apikey\' n’est pas défini'
+				), 400);
+			}
+			else {
+				$key = $request->headers->get('apikey');
+				$found = false;
+				$keylist = file(__DIR__.'/../../cache/keylist.txt');
+				$keylist = array_map("rtrim", $keylist);
+				$length = count($keylist);
+				$file = fopen(__DIR__.'/../../cache/keylist.txt', 'w');
+				for ($i = 0; $i < $length; $i += 2) {
+					if ($keylist[$i] != $key)
+						fwrite($file, $keylist[$i]."\n".$keylist[($i + 1)]."\n");
+					else $found = true;
+				}
+				fclose($file);
+				if ($found)
+					$json = $app->json(array(
+						'status' => 'OK'
+					), 200);
+				else
+					$json = $app->json(array(
+						'status' => 'KO',
+						'error' => 'La clé d’API fournie n’est pas reconnue'
+					), 400);
+			}
+			return $json;
 		}
 		
 	}
