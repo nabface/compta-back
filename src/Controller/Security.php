@@ -43,10 +43,7 @@
 					'error' => 'Votre session a expiré'
 				), 400);
 			}
-			return $app->json(array(
-				'status' => 'KO',
-				'error' => 'La clé d’API fournie n’est pas reconnue'
-			), 400);
+			return NULL;
 		}
 		
 	}
