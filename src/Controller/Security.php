@@ -7,6 +7,10 @@
 	
 	trait Security {
 		
+		protected function getKeylist(Application $app) {
+			return array_map("rtrim", file($app['keylist']));
+		}
+		
 		protected function isLoggedIn(Request $request, Application $app) {
 			if (!$request->headers->has('apikey'))
 				return $app->json(array(
@@ -15,8 +19,7 @@
 				), 400);
 			$key = $request->headers->get('apikey');
 			$found = false;
-			$keylist = file($app['keylist']);
-			$keylist = array_map("rtrim", $keylist);
+			$keylist = $this->getKeylist($app);
 			$length = count($keylist);
 			for ($i = 0; $i < $length; $i += 2) {
 				if ($keylist[$i] == $key) return $this->hasKeyExpired($i, $app);
@@ -28,8 +31,7 @@
 		}
 		
 		protected function hasKeyExpired($index, Application $app) {
-			$keylist = file($app['keylist']);
-			$keylist = array_map("rtrim", $keylist);
+			$keylist = $this->getKeylist($app);
 			if ($keylist[($index + 1)] < time()) {
 				$file = fopen($app['keylist'], 'w');
 				$length = count($keylist);
