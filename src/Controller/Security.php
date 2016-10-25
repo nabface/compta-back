@@ -50,7 +50,9 @@
 			}
 			elseif ($reset) {
 				for ($i = 0; $i < $length; $i += 2) {
-					$keyexpiration = ($i == $index) ? time() + 1500 : $keylist[($i + 1)] ;
+					$keyexpiration = ($i == $index)?
+						time() + $app['keyexpiration']:
+						$keylist[($i + 1)];
 					fwrite($file, $keylist[$i]."\n".$keyexpiration."\n");
 				}
 				fclose($file);

@@ -27,7 +27,7 @@
 				}
 				else {
 					$key = base64_encode(random_bytes(64));
-					$keyexpiration = time() + 1500;
+					$keyexpiration = time() + $app['keyexpiration'];
 					$keylist = fopen($app['keylist'], 'a');
 					fwrite($keylist, $key."\n".$keyexpiration."\n");
 					fclose($keylist);
