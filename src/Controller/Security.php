@@ -22,7 +22,7 @@
 			$keylist = $this->getKeylist($app);
 			$length = count($keylist);
 			for ($i = 0; $i < $length; $i += 2) {
-				if ($keylist[$i] == $key) return $this->hasKeyExpired($i, $app);
+				if ($keylist[$i] == $key) return $this->hasKeyExpired($i, $app, true);
 				else $this->hasKeyExpired($i, $app);
 			}
 			return $app->json(array(
@@ -31,7 +31,7 @@
 			), 400);
 		}
 		
-		protected function hasKeyExpired($index, Application $app) {
+		protected function hasKeyExpired($index, Application $app, $reset = false) {
 			$keylist = $this->getKeylist($app);
 			if ($keylist[($index + 1)] < time()) {
 				$file = fopen($app['keylist'], 'w');
@@ -45,6 +45,15 @@
 					'status' => 'KO',
 					'error' => 'Votre session a expiré'
 				), 400);
+			}
+			elseif ($reset) {
+				$file = fopen($app['keylist'], 'w');
+				$length = count($keylist);
+				for ($i = 0; $i < $length; $i += 2) {
+					$keyexpiration = ($i == $index) ? time() + 1500 : $keylist[($i + 1)] ;
+					fwrite($file, $keylist[$i]."\n".$keyexpiration."\n");
+				}
+				fclose($file);
 			}
 			return NULL;
 		}
