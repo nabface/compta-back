@@ -1,5 +1,6 @@
 <?php
 	
+	// database connexion credentials
 	$app['db.options'] = array(
 		'driver'   => 'pdo_mysql',
 		'charset'  => 'utf8',
@@ -9,12 +10,28 @@
 		'user'     => 'user_name',
 		'password' => 'user_password',
 	);
+	
+	// administration account credentials
 	$app['admin'] = array(
 		'admin_name' => 'admin_password'
 	);
+	
+	// path to the file used to store API keys
+	// the web server needs write access to this file
 	$app['keylist'] = __DIR__.'/../../cache/keylist.txt';
+	
+	// time before an API key expires (in seconds)
 	$app['keyexpiration'] = 1500;
+	
+	// logging level
 	$app['monolog.level'] = 'debug';
+	
+	// path to the file used to store application logs
+	// the web server needs write access to this file
+	// for testing, the user running PHPUnit needs write access to this file
+	$app['monolog.logfile'] = __DIR__.'/../../logs/dev.log';
+	
+	// show debug infos
 	$app['debug'] = true;
 	
 ?>
