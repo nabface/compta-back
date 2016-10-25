@@ -44,8 +44,7 @@
 			$json = $this->isLoggedIn($request, $app);
 			if ($json === NULL) {
 				$key = $request->headers->get('apikey');
-				$keylist = file($app['keylist']);
-				$keylist = array_map("rtrim", $keylist);
+				$keylist = $this->getKeylist($app);
 				$length = count($keylist);
 				$file = fopen($app['keylist'], 'w');
 				for ($i = 0; $i < $length; $i += 2) {
