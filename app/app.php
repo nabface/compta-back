@@ -12,7 +12,7 @@
 	$app->register(new Silex\Provider\DoctrineServiceProvider());
 	$app->register(new Silex\Provider\RoutingServiceProvider());
 	$app->register(new Silex\Provider\MonologServiceProvider(), array(
-		'monolog.logfile' => __DIR__.'/../logs/dev.log',
+		'monolog.logfile' => $app['monolog.logfile'],
 		'monolog.name' => 'Compta',
 		'monolog.level' => $app['monolog.level']
 	));
