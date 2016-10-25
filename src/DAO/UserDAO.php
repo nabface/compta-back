@@ -15,28 +15,19 @@
 		}
 		
 		public function get($info) {
-			$where = (is_numeric($info)) ? 'id = :info' : 'name = :info' ;
+			$user = $this->getObject($info, 'users', 'Compta\Domain\User');
+			if (!$user) return false;
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
-			      ->from('users')
-			      ->where($where)
-			      ->setParameter(':info', $info);
-			$statement = $query->execute();
-			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\User');
-			$user = $statement->fetch();
-			if ($user) {
-				$query = $this->getDb()->createQueryBuilder();
-				$query->select('*')
-				      ->from('mapping_groups')
-				      ->where('user_id = :user_id')
-				      ->setParameter(':user_id', $user->getId());
-				$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-				$groups = [];
-				foreach ($answer as $row) {
-					$groups[] = $row['group_id'];
-				}
-				$user->setGroups($groups);
+			      ->from('mapping_groups')
+			      ->where('user_id = :user_id')
+			      ->setParameter(':user_id', $user->getId());
+			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			$groups = [];
+			foreach ($answer as $row) {
+				$groups[] = $row['group_id'];
 			}
+			$user->setGroups($groups);
 			return $user;
 		}
 		

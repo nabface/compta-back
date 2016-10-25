@@ -7,15 +7,7 @@
 	class GroupDAO extends DAO {
 		
 		public function get($info) {
-			$where = (is_numeric($info)) ? 'id = :info' : 'name = :info' ;
-			$query = $this->getDb()->createQueryBuilder();
-			$query->select('*')
-			      ->from('groups')
-			      ->where($where)
-			      ->setParameter(':info', $info);
-			$statement = $query->execute();
-			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Group');
-			return $statement->fetch();
+			return $this->getObject($info, 'groups', 'Compta\Domain\Group');
 		}
 		
 		public function listAll() {
@@ -24,7 +16,9 @@
 			      ->from('groups');
 			$statement = $query->execute();
 			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Group');
-			return $statement->fetchAll();
+			$group = $statement->fetchAll();
+			if (!$group) return false;
+			return $group;
 		}
 		
 		public function save(Group $group) {

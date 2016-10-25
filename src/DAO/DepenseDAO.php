@@ -24,14 +24,7 @@
 		}
 		
 		public function get($id) {
-			$query = $this->getDb()->createQueryBuilder();
-			$query->select('*')
-			      ->from('depenses')
-			      ->where('id = :id')
-			      ->setParameter(':id', $id);
-			$statement = $query->execute();
-			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
-			$depense = $statement->fetch();
+			$depense = $this->getObject($id, 'depenses', 'Compta\Domain\Depense');
 			if (!$depense) return false;
 			$this->addUsers($depense);
 			return $depense;
