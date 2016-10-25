@@ -33,9 +33,11 @@
 		
 		protected function hasKeyExpired($index, Application $app, $reset = false) {
 			$keylist = $this->getKeylist($app);
-			if ($keylist[($index + 1)] < time()) {
+			if ($reset || $keylist[($index + 1)] < time()) {
 				$file = fopen($app['keylist'], 'w');
 				$length = count($keylist);
+			}
+			if ($keylist[($index + 1)] < time()) {
 				for ($i = 0; $i < $length; $i += 2) {
 					if ($i != $index)
 						fwrite($file, $keylist[$i]."\n".$keylist[($i + 1)]."\n");
@@ -47,8 +49,6 @@
 				), 400);
 			}
 			elseif ($reset) {
-				$file = fopen($app['keylist'], 'w');
-				$length = count($keylist);
 				for ($i = 0; $i < $length; $i += 2) {
 					$keyexpiration = ($i == $index) ? time() + 1500 : $keylist[($i + 1)] ;
 					fwrite($file, $keylist[$i]."\n".$keyexpiration."\n");
