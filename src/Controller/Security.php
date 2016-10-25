@@ -23,6 +23,7 @@
 			$length = count($keylist);
 			for ($i = 0; $i < $length; $i += 2) {
 				if ($keylist[$i] == $key) return $this->hasKeyExpired($i, $app);
+				else $this->hasKeyExpired($i, $app);
 			}
 			return $app->json(array(
 				'status' => 'KO',
