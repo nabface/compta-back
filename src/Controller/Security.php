@@ -15,7 +15,7 @@
 				), 400);
 			$key = $request->headers->get('apikey');
 			$found = false;
-			$keylist = file(__DIR__.'/../../cache/keylist.txt');
+			$keylist = file($app['keylist']);
 			$keylist = array_map("rtrim", $keylist);
 			$length = count($keylist);
 			for ($i = 0; $i < $length; $i += 2) {
@@ -28,10 +28,10 @@
 		}
 		
 		protected function hasKeyExpired($index, Application $app) {
-			$keylist = file(__DIR__.'/../../cache/keylist.txt');
+			$keylist = file($app['keylist']);
 			$keylist = array_map("rtrim", $keylist);
 			if ($keylist[($index + 1)] < time()) {
-				$file = fopen(__DIR__.'/../../cache/keylist.txt', 'w');
+				$file = fopen($app['keylist'], 'w');
 				$length = count($keylist);
 				for ($i = 0; $i < $length; $i += 2) {
 					if ($i != $index)

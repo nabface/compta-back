@@ -28,7 +28,7 @@
 				else {
 					$key = base64_encode(random_bytes(64));
 					$keyexpiration = time() + 1500;
-					$keylist = fopen(__DIR__.'/../../cache/keylist.txt', 'a');
+					$keylist = fopen($app['keylist'], 'a');
 					fwrite($keylist, $key."\n".$keyexpiration."\n");
 					fclose($keylist);
 					$json = $app->json(array(
@@ -44,10 +44,10 @@
 			$json = $this->isLoggedIn($request, $app);
 			if ($json === NULL) {
 				$key = $request->headers->get('apikey');
-				$keylist = file(__DIR__.'/../../cache/keylist.txt');
+				$keylist = file($app['keylist']);
 				$keylist = array_map("rtrim", $keylist);
 				$length = count($keylist);
-				$file = fopen(__DIR__.'/../../cache/keylist.txt', 'w');
+				$file = fopen($app['keylist'], 'w');
 				for ($i = 0; $i < $length; $i += 2) {
 					if ($keylist[$i] != $key)
 						fwrite($file, $keylist[$i]."\n".$keylist[($i + 1)]."\n");
