@@ -6,6 +6,23 @@
 	
 	class DepenseDAO extends DAO {
 		
+		public function getUsersList(Depense $depense) {
+			$query = $this->getDb()->createQueryBuilder();
+			$query->select('user_id')
+			      ->from('mapping_users')
+			      ->where('depense_id = :depense_id')
+			      ->setParameter(':depense_id', $depense->getId());
+			$map = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			$users = [];
+			foreach ($map as $row) $users[] = $row['user_id'];
+			return $users;
+		}
+		
+		public function addUsers(Depense $depense) {
+			$users = $this->getUsersList($depense);
+			foreach ($users as $user) $depense->addUser($user);
+		}
+		
 		public function get($id) {
 			$query = $this->getDb()->createQueryBuilder();
 			$query->select('*')
@@ -16,13 +33,7 @@
 			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
 			$depense = $statement->fetch();
 			if (!$depense) return false;
-			$query = $this->getDb()->createQueryBuilder();
-			$query->select('*')
-			      ->from('mapping_users')
-			      ->where('depense_id = :depense_id')
-			      ->setParameter(':depense_id', $depense->getId());
-			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-			foreach ($answer as $row) $depense->addUser($row['user_id']);
+			$this->addUsers($depense);
 			return $depense;
 		}
 		
@@ -34,16 +45,10 @@
 			      ->setParameter(':group_id', $group_id);
 			$statement = $query->execute();
 			$statement->setFetchMode(\PDO::FETCH_CLASS, 'Compta\Domain\Depense');
-			$depenses = [];
-			foreach ($statement->fetchAll() as $depense) {
-				$query = $this->getDb()->createQueryBuilder();
-				$query->select('*')
-				      ->from('mapping_users')
-				      ->where('depense_id = :depense_id')
-				      ->setParameter(':depense_id', $depense->getId());
-				$map = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-				foreach ($map as $association)
-					$depense->addUser($association['user_id']);
+			$answer = $statement->fetchAll();
+			if (count($answer) == 0) return false;
+			foreach ($answer as $depense) {
+				$this->addUsers($depense);
 				$depenses[] = $depense;
 			}
 			return $depenses;
@@ -67,18 +72,13 @@
 				$depense->setId($id);
 			}
 			// get entries from 'mapping_users' table
-			$query = $this->getDb()->createQueryBuilder();
-			$query->select('*')
-			      ->from('mapping_users')
-			      ->where('depense_id = :depense_id')
-			      ->setParameter(':depense_id', $depense->getId());
-			$answer = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+			$users_from_db = $this->getUsersList($depense);
 			$users = $depense->getUsers();
 			// create entries in 'mapping_users' table
 			foreach ($users as $user) {
 				$found = false;
-				foreach ($answer as $row)
-					if ($row['user_id'] == $user) $found = true;
+				foreach ($users_from_db as $user_from_db)
+					if ($user_from_db == $user) $found = true;
 				if (!$found)
 					$this->getDb()->insert('mapping_users', array(
 						'depense_id' => $id,
@@ -86,10 +86,10 @@
 					));
 			}
 			// remove entries in 'mapping_users' table
-			foreach ($answer as $row) {
+			foreach ($users_from_db as $user_from_db) {
 				$found = false;
-				foreach ($users as $group)
-					if ($row['user_id'] == $user) $found = true;
+				foreach ($users as $user)
+					if ($user_from_db == $user) $found = true;
 				if (!$found)
 					$this->getDb()->delete('mapping_users', array(
 						'depense_id' => $id,
