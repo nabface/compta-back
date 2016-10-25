@@ -12,6 +12,7 @@
 	$app['admin'] = array(
 		'admin_name' => 'admin_password'
 	);
+	$app['keylist'] = __DIR__.'/../../cache/keylist.txt';
 	$app['monolog.level'] = 'debug';
 	$app['debug'] = true;
 	
