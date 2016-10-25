@@ -39,24 +39,32 @@
 		}
 		
 		public function getDepenses($group_id, Application $app) {
+			$json = NULL;
 			$depenses = $app['dao.depense']->findByGroup($group_id);
-			$result = [];
-			foreach ($depenses as $depense) {
-				$result[] = array(
-					'Id' => $depense->getId(),
-					'Montant' => $depense->getMontant(),
-					'Payeur' => $depense->getUserId(),
-					'Concernes' => implode(',', $depense->getUsers()),
-					'Date' => $depense->getDate(),
-					'nbConcernes' => count($depense->getUsers()),
-					'usergroup' => $app['dao.group']->get($group_id)->getName(),
-					'Description' => $depense->getName()
-				);
+			if (!$depenses)
+				$json = $app->json(array(
+					'status' => 'KO',
+					'error' => 'Pas de dépense enregistrée dans le groupe identifié par l’id '.$group_id
+				), 400);
+			if ($json === NULL) {
+				foreach ($depenses as $depense) {
+					$records[] = array(
+						'Id' => $depense->getId(),
+						'Montant' => $depense->getMontant(),
+						'Payeur' => $depense->getUserId(),
+						'Concernes' => implode(',', $depense->getUsers()),
+						'Date' => $depense->getDate(),
+						'nbConcernes' => count($depense->getUsers()),
+						'usergroup' => $app['dao.group']->get($group_id)->getName(),
+						'Description' => $depense->getName()
+					);
+				}
+				$json = $app->json(array(
+					'records' => $records,
+					'status' => 'OK'
+				), 200);
 			}
-			return $app->json(array(
-				'records' => $result,
-				'status' => 'OK'
-			), 200);
+			return $json;
 		}
 		
 	}
