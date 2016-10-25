@@ -14,10 +14,10 @@ Clonez la branche "1.1" du dépôt :
 	$ git clone -b 1.1 https://github.com/vv221/compta-back
 	$ cd compta-back
 
-Ajoutez les droits d’écriture pour votre serveur web sur le répertoire logs :
+Ajoutez les droits d’écriture pour votre serveur web sur les répertoires /cache et /logs :
 
-	$ chgrp www-data logs
-	$ chmod g+w logs
+	$ chgrp www-data cache logs
+	$ chmod g+w cache logs
 
 Renommez le fichier app/config/prod.php.example en app/config/prod.php et renseignez-y les identifiants permettant d’accéder à votre base de données. Dans ce même fichier renseignez le login et le mot de passe du compte d’administration, ainsi que les chemins des fichiers où sont enregistrés les journaux ainsi que les clés d’authentification.
 
